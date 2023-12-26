@@ -8,16 +8,11 @@ This is the part of a project that focuses on getting the data from Kafka into P
 3. Processing to account for Confluent avro format and transform data to the desired shape
 4. Loading data into Postgres
 
-Insert Diagram / Video
+[//]: # (Insert Diagram / Video)
 
-### How to run
+[//]: # ( ### How to run)
 
-### Learnings
-- Packaging python dependencies via pex
-- Managing Spark dependencies 
-- Kafka Listeners 
-- DNS within Docker networking 
 
-### Known Issues
+[//]: # (### Known Issues )
 
-### Enhancements:
+[//]: # ( ### Enhancements: )

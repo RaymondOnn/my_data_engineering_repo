@@ -8,14 +8,11 @@ This is the part of a project that focuses on getting the data from the web into
 3. Streaming data packets into Kafka producer via generator functions
 4. Ingesting data into Kafka broker for the next part of the pipeline to pick up
 
-Insert Diagram / Video
+[//]: # (Insert Diagram / Video)
 
-### How to run
-### Learnings:
-- The AVRO format
-- Web Scraping via `httpx` and `selectolax`
-- 
+[//]: # ( ### How to run)
 
-### Known Issues
 
-### Enhancements:
+[//]: # (### Known Issues )
+
+[//]: # ( ### Enhancements: )
