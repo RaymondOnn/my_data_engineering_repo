@@ -1,0 +1,15 @@
+
+webscraper:
+  base_url: http://books.toscrape.com
+  headers: 
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+kafka:
+  bootstrap_servers:  >-
+    localhost:9092,localhost:9093,localhost:9094
+  topic: books
+
+schema_registry:
+  url: http://localhost:8081
+
+
+#'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
