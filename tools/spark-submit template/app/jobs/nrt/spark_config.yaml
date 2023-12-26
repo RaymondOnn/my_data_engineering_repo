@@ -1,0 +1,33 @@
+
+spark:
+  app_name: Streaming Pipeline
+  config: 
+    spark.streaming.stopGracefullyOnShutdown: True
+    #spark.executorEnv.PEX_ROOT: ./.pex 
+# "spark.archives": "/opt/bitnami/spark/work/pyspark_conda_env.tar.gz#environment",
+# "spark.pyspark.virtualenv.enabled": "true",
+# "spark.pyspark.virtualenv.type": "native",
+# "spark.pyspark.virtualenv.requirements": "/opt/bitnami/spark/work/requirements.txt",
+# "spark.pyspark.virtualenv.bin.path": "/opt/bitnami/spark/work/venv",
+# "spark.pyspark.python": "python3",
+kafka:
+  bootstrap_servers: &kafka_servers >-
+    kafka-broker-1:9092, kafka-broker-2:9093, kafka-broker-3:9094
+  topic: backpacks
+  config: 
+    kafka.bootstrap.servers: *kafka_servers
+    startingOffsets: "earliest"
+    includeHeaders: "true"
+    failOnDataLoss: "false"
+schema_registry:
+  URL: http://localhost:8081
+  # SCHEMA_REGISTRY_SUBJECT: f"{KAFKA_TOPIC}-value"
+postgres:
+  user: postgres
+  password: postgres
+  db_name: postgres
+  server: localhost  # '127.0.0.1'
+  port: 5432
+  #JDBC_URL = f"jdbc:postgresql://{SERVER}/{DB_NAME}"
+  #TBL_NAME: f"public.{KAFKA_TOPIC}"
+

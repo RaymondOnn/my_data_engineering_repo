@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ssh_server:
+    container_name: ssh_server
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: the_ssh_image
+#    entrypoint: ['./entrypoint.sh', 'master']
+    ports:
+      - '2222:22'
+
+  ssh_client:
+    container_name: ssh_client
+    image: the_ssh_image
+    ports:
+      - '2223:22'
