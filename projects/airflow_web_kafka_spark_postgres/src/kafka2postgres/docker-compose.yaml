@@ -1,0 +1,68 @@
+version: '3'
+
+# PORTS:
+# ZooKeeper 2181: 2181
+# postgresdb 5432:5432
+# kafka-ui 8889: 8080
+# schema-registry 8081: 8081
+# Kafka-connect 8083: 8083
+# Kafka-broker-1 9092: 9092
+# Kafka-broker-2 9093: 9093
+# Kafka-broker-3 9094: 9094
+
+services:
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+    restart: always
+    networks:
+      - kafka-network
+
+  # doc: https://spark.apache.org/docs/latest/spark-standalone.html#cluster-launch-scripts
+  spark-master:
+    container_name: spark-master
+    hostname: spark
+    image: docker.io/bitnami/spark:3.5.0
+    ports:
+      - '8070:8080'
+      - '8077:8077'
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_PORT=8077
+    volumes:
+      - ${PWD:-.}/spark:/opt/bitnami/spark/work
+      #- ./spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+    networks:
+      - kafka-network
+
+  spark-worker:
+    container_name: spark-worker
+    image: docker.io/bitnami/spark:3.5.0
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:8077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+    volumes:
+      - ${PWD:-.}/spark:/opt/bitnami/spark/work
+    networks:
+      - kafka-network
+
+networks:
+  kafka-network:
+    driver: bridge
+  #airflow-kafka:
+  #  external: true
