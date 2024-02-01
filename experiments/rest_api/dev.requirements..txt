@@ -9,5 +9,4 @@ flask-sqlalchemy
 flask-jwt-extended
 passlib
 flask-migrate
-gunicorn  # production server
 rq  # redis
