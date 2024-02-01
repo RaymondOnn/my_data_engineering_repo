@@ -1,7 +1,7 @@
 SHELL := /bin/bash # Tell Make this file is written with Bash as shell
-.ONESHELL #  each Make recipe is ran as one single shell session
+.ONESHELL: #  each Make recipe is ran as one single shell session
 .SHELLFLAGS := -eu -o pipefail -c # Bash strict mode
-.DELETE_ON_ERROR   # if a Make rule fails, it’s target file is deleted
+.DELETE_ON_ERROR:   # if a Make rule fails, it’s target file is deleted
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
@@ -61,16 +61,14 @@ submit: pex ## submit job for execution
 			--conf spark.pyspark.python=$(WORKDIR)/$(PEX_FOLDER)/jobs.pex \
 				$(WORKDIR)/entrypoint.py --job nrt'
 
-exec: submit
-
-$(WORKDIR)/$(PEX_FOLDER)/jobs.pex:  $(shell find $$(WORKDIR)/jobs -type f)   ## (for test job) package job dependencies into pex file
-	rm -rf ./app/$(PEX_FOLDER);
-	docker exec $(CONTAINER_NAME) /bin/bash -c \
-		'pex --python=python3 \
-			--inherit-path=prefer \
-			-r $(WORKDIR)/jobs/$(JOB_NAME)/requirements.txt \
-			-o $(WORKDIR)/$(PEX_FOLDER)/jobs.pex \
-			-D $(WORKDIR)/jobs'
+exec-submit:  $(shell find $$(WORKDIR)/jobs -type f)   ## (for test job) package job dependencies into pex file
+		rm -rf ./app/$(PEX_FOLDER);
+		docker exec $(CONTAINER_NAME) /bin/bash -c \
+			'pex --python=python3 \
+				--inherit-path=prefer \
+				-r $(WORKDIR)/jobs/$(JOB_NAME)/requirements.txt \
+				-o $(WORKDIR)/$(PEX_FOLDER)/jobs.pex \
+				-D $(WORKDIR)/jobs'
 
 # --env-var partitions=4 --env-var sample_size=20000000'
 test-submit: $(WORKDIR)/$(PEX_FOLDER)/jobs.pex ## (for test job) submit job for execution
@@ -84,7 +82,6 @@ test-exec: test-submit
 
 submit_draft:
 	docker exec da-spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./apps/$(app)
-
 
 
 test: 

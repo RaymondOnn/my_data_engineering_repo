@@ -1,13 +1,11 @@
-# airflow_web_kafka_spark_postgres
 
-### Technical Goals
-- Try out tools related to stream processing
-- Learn to use `httpx` and `selectolax`
-- Figure out how to better deploy Airflow for e.g. less code duplication, automated dags, deploying at scale, error-handling etc
+### What is it?
+A near-time streaming pipeline transferring scraped data from the web into a database (i.e. postgres)
 
-### Learnings
-- Web Scraping via `httpx` and `selectolax`
-- Automation via `make`files
+### Why?
+To try out stream processing
+
+### Some Learnings
 - The `avro` format
   - Other than the data component, it has an extra schema component that specifies the structure of the data i.e. defines the fields, their data types, default values.
   - The schema is stored in JSON format (in a `.avsc`file)

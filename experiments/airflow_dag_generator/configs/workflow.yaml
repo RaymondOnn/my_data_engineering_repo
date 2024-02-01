@@ -1,0 +1,46 @@
+
+name: first template
+dag:
+    dag_id: web_streams
+    start_date: days_ago(0)
+    schedule: None
+    catchup: False
+tasks:
+    task1:
+        task_id: start
+        operator: airflow.operators.bash.BashOperator
+        params:
+            bash_command: echo "Workflow started at $(date +%Y-%m-%dT%T)"
+    run_stream:
+        task_id: web2kafka
+        operator: airflow.providers.docker.operators.docker.DockerOperator
+        upstream: task1
+        params:
+            image: task_web2kafka
+            api_version: auto
+            docker_url: tcp://docker-proxy:2375
+            auto_remove: True
+            command: echo "this is a test message shown from within the container"
+            mount_tmp_dir: False
+            network_mode: bridge
+    to_sink:
+        task_id: kafka2pg
+        operator: airflow.providers.apache.spark.operators.spark_submit.SparkSubmitOperator
+        upstream: run_stream
+        params:
+            application: 'spark_script.py'
+            conn_id: CONN_ID
+            verbose: False
+            packages:
+                org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,
+                org.postgresql:postgresql:42.6.0,
+                org.apache.spark:spark-avro_2.12:3.5.0
+            conf:
+                spark.pyspark.python: "jobs.pex"
+    task4:
+        task_id: end
+        operator: airflow.operators.bash.BashOperator
+        upstream: to_sink
+        params:
+            bash_command: echo "Workflow finished at $(date +%Y-%m-%dT%T)"
+

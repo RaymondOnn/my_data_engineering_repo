@@ -1,0 +1,13 @@
+pandas
+duckdb
+duckdb_engine
+flask
+flask-smorest
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+flask-jwt-extended
+passlib
+flask-migrate
+gunicorn  # production server
+rq  # redis

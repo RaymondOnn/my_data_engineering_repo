@@ -1,0 +1,52 @@
+{%- macro print_operator_imports() -%}
+{%- set operators = [] -%}
+{%- for _, cfg in tasks.items() if cfg.operator not in operators  -%}
+{%- set _ = operators.append( cfg.operator ) -%}
+from {{cfg.operator.split('.')[:-1] | join(".") }} import {{cfg.operator.split('.')[-1] }}{{'\n'}}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+{%- macro print_task(task_name, task_cfg) -%}
+    {{ task_name }} = {{task_cfg.operator.split('.')[-1] }}(
+        task_id='{{task_cfg.task_id}}',
+        {%- for key, value in task_cfg['params'].items() -%}
+        {%- if (value is number) or (value in [True, False]) or (value is mapping) %}
+        {{key}}={{value}}
+        {%- else %}
+        {{key}}='{{value}}'
+        {%- endif -%},
+        {%- endfor -%}{{'\n    '}})
+{%- endmacro -%}
+
+{%- macro print_task_order() -%}
+    {%- set steps = [] -%}
+    {%- set n = tasks.values()|length -%}
+    {%- for n in range(n) -%}
+        {%- for key, val in tasks.items() %}
+            {%- if val.upstream == steps|last and steps|length>0 -%}
+                {%- set _ = steps.append( key ) -%}
+            {%- elif val.upstream is not defined and steps|length==0 -%}
+                {%- set _ = steps.insert(0, key ) -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endfor -%}
+    {{ steps | join(' >> ') }}
+{%- endmacro -%}
+
+from airflow.decorators import dag
+from airflow.utils.dates import days_ago
+{{print_operator_imports()}}
+
+@dag(start_date={{dag.start_date}}, schedule={{dag.schedule}}, catchup={{dag.catchup or False}})
+def {{dag.dag_id}}():
+    {% for key, val in tasks.items() -%}
+    {{ print_task(task_name=key, task_cfg=val) }}
+    {{'\n'}}
+    {% endfor -%}
+
+    {{print_task_order()}}
+
+
+{{ dag.dag_id }}()
+

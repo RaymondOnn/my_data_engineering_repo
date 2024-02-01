@@ -18,7 +18,7 @@ services:
     volumes:
       - ${PWD:-.}/app:/opt/spark/workdir
       - ${PWD:-.}/conf:/opt/spark/conf
-      - ${PWD:-.}/app/logs:/opt/spark/spark-events
+      - ${PWD:-.}/logs:/opt/spark/spark-events
     env_file:
       - ./docker/.env.spark
     ports:
@@ -50,7 +50,21 @@ services:
     volumes:
       - ${PWD:-.}/app:/opt/spark/workdir
       - ${PWD:-.}/conf:/opt/spark/conf
-      - ${PWD:-.}/app/logs:/opt/spark/spark-events
-
+      - ${PWD:-.}/logs:/opt/spark/spark-events
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
 volumes:
   spark-logs:

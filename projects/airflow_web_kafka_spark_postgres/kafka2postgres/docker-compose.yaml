@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+    restart: always
+    networks:
+      - kafka-network
+
+  # doc: https://spark.apache.org/docs/latest/spark-standalone.html#cluster-launch-scripts
+  spark-master:
+    container_name: da-spark-master
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    image: da-spark-image
+    environment:
+      - SPARK_MODE=master
+#     healthcheck:
+#       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 3
+    volumes:
+      - ${PWD:-.}/app:/opt/spark/workdir
+      - ${PWD:-.}/conf:/opt/spark/conf
+      - ${PWD:-.}/app/logs:/opt/spark/spark-events
+    env_file:
+      - ./docker/.env.spark
+    ports:
+      - '9090:8080'
+      - '7077:7077'
+
+  spark-worker:
+    container_name: da-spark-worker
+    image: da-spark-image
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    env_file:
+      - ./docker/.env.spark
+    volumes:
+      - ${PWD:-.}/app:/opt/spark/workdir
+      - ${PWD:-.}/conf:/opt/spark/conf
+      - ${PWD:-.}/app/logs:/opt/spark/spark-events
+
+volumes:
+  spark-logs:

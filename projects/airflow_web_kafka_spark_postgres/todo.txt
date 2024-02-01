@@ -1,19 +1,8 @@
-- [ ] Setup Virtual Environment
-- [x] Create Scraper
-    - URL: https://www.rei.com/c/backpacks?page=24
-- [x] Write DockerFiles
-- [x] Create Kafka Streaming
-    - 3 Nodes
-- [x] Data Processing via Spark (Flink: Attempt Failed)
-- [x] Database via Postgres
-    - ETL Schema for data cleansing
-    - Products Schema for data storage
 - [ ] Create AirFlow DAG Script for Trigger
     - [ ] Set up simple dag and get things working
     - [ ] Explore using cluster-pack for Spark Deployment
-        - No easy way to communicate between docker containers
-    - [ ] Explore Flask-Shell2HTTP. Might be solution for inter-container communication
-    -
+    - [ ] figure out how to communicate between docker containers
+
 - [ ] Add Error Handling, Logging
 - [ ] Add Testing, Data Quality (WAP Pattern)
 - [ ] Add Alerts, CICD

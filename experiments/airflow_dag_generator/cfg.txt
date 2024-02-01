@@ -1,0 +1,37 @@
+{'dag': {'catchup': False,
+         'dag_id': 'web_streams',
+         'schedule': 'None',
+         'start_date': 'days_ago(0)'},
+ 'name': 'first template',
+ 'tasks': {'run_stream': {'operator': 'airflow.providers.docker.operators.docker.DockerOperator',
+                          'params': {'api_version': 'auto',
+                                     'auto_remove': True,
+                                     'command': 'echo "this is a test message '
+                                                'shown from within the '
+                                                'container"',
+                                     'docker_url': 'tcp://docker-proxy:2375',
+                                     'image': 'task_web2kafka',
+                                     'mount_tmp_dir': False,
+                                     'network_mode': 'bridge'},
+                          'task_id': 'web2kafka',
+                          'upstream': 'task1'},
+           'task1': {'operator': 'airflow.operators.bash.BashOperator',
+                     'params': {'bash_command': 'echo "Workflow started at '
+                                                '$(date \'+%Y-%m-%dT%T\')"'},
+                     'task_id': 'start'},
+           'task4': {'operator': 'airflow.operators.bash.BashOperator',
+                     'params': {'bash_command': 'echo "Workflow finished at '
+                                                '$(date \'+%Y-%m-%dT%T\')"'},
+                     'task_id': 'end',
+                     'upstream': 'to_sink'},
+           'to_sink': {'operator': 'airflow.providers.apache.spark.operators.spark_submit.SparkSubmitOperator',
+                       'params': {'application': 'spark_script.py',
+                                  'conf': {'spark.pyspark.python': 'jobs.pex'},
+                                  'conn_id': 'CONN_ID',
+                                  'packages': 'org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0, '
+                                              'org.postgresql:postgresql:42.6.0, '
+                                              'org.apache.spark:spark-avro_2.12:3.5.0',
+                                  'verbose': False},
+                       'task_id': 'kafka2pg',
+                       'upstream': 'run_stream'}}}
+
