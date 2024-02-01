@@ -1,7 +1,6 @@
 from jinja2 import Environment, FileSystemLoader
 import yaml
 import os
-from pprint import pprint
 
 file_dir = os.path.abspath(f'{__file__}/../.')
 env = Environment(loader=FileSystemLoader(file_dir))
