@@ -15,5 +15,5 @@ docker run --rm -v $(pwd):/build <IMG_NAME> <PEX_COMMAND>
 - An example of pex command:
 
     ``` commandline
-    [COMMAND]: pex ansible==2.3.0.0 -c ansible-playbook -o ansible-playbook
+    pex -r ./requirements.txt  -o output.pex
     ```

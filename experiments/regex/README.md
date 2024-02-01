@@ -5,4 +5,4 @@ An attempt to do three things regarding regex:
 3. To be able to work with regex in a way that is easy to understand
 
 ## Why 
-To familiarize myself with regex.Perhaps build something that could help me with regex in the future.
+To familiarize myself with regex. Perhaps build something that could help me with regex in the future.
