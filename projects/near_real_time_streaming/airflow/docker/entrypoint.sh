@@ -62,7 +62,6 @@ function run_nc() {
     nc -zvvn "${ip}" "${port}"
 }
 
-
 function wait_for_connection {
     # Waits for Connection to the backend specified via URL passed as first parameter
     # Detects backend type depending on the URL schema and assigns

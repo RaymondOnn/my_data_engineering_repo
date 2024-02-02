@@ -10,10 +10,14 @@ ENV PATH=${AIRFLOW_HOME}.local/bin:$PATH
 # Include configuration and neccessary files into image
 # Set the working directory
 WORKDIR ${AIRFLOW_HOME}
-COPY airflow.requirements.txt .
+RUN --mount=type=bind,source=docker/img.requirements.txt,target=/tmp/requirements.txt \
+            pip install --requirement /tmp/requirements.txt
 #COPY dags .
-COPY ../airflow.cfg entrypoint.sh ./
-COPY ../../components ./components
+COPY ./airflow.cfg ./docker/entrypoint.sh ./
+
+# COPY helper classes
+COPY ./../../components ./components
+
 # Install system dependencies
 # Install Apache Airflow and other python packages from requirements
 # Set up a non-root user
@@ -33,7 +37,6 @@ RUN apt-get update  \
     && rm -rf /var/lib/apt/lists/*  \
     && mkdir -p $AIRFLOW_HOME \
     && ln -s /usr/bin/python3.8 /usr/bin/python  \
-    && pip install -r airflow.requirements.txt  \
     && useradd -ms /bin/bash airflow --uid 50000  \
     && apt-get remove --auto-remove linux-libc-dev -y \
     && chown -R airflow: $AIRFLOW_HOME  \
