@@ -19,9 +19,9 @@
 >##### What is standalone mode?
 >- Launching in `standalone mode` is done via the `airflow standalone` command.  
 >- The `airflow standalone` command 
->  1. initializes the database
->  2. creates a user
->  3. starts all components.
+>     1. initializes the database
+>     2. creates a user
+>     3. starts all components.
 >    ``` commandline
 >    airflow db migrate
 >    
